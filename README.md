@@ -10,3 +10,5 @@ experiments) by Bharath M. Palavalli.
 
 Setup: Settings → Pages → Source "GitHub Actions"; custom domain `quixotic.bharathpalavalli.com`
 (DNS: `CNAME quixotic → bmp.github.io`), Enforce HTTPS.
+
+Licence: code MIT (`LICENSE`); text and images CC BY 4.0 (`LICENSE-CONTENT.md`). Experiments keep their own.
