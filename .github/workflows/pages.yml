@@ -1,0 +1,46 @@
+name: Pages
+
+# The site: main (this landing page) plus each experiment's published site from its own branch,
+# e.g. `qrpickle-site` (force-pushed by bmp/QRPickle's release workflow) under /QRPickle/.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:   # bmp/QRPickle asks for a build after publishing
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-24.04
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          path: site
+      - name: Experiments
+        run: |
+          rm -rf site/.git site/.github
+          if git ls-remote --exit-code --heads "https://github.com/${GITHUB_REPOSITORY}.git" qrpickle-site; then
+            git clone --depth 1 --branch qrpickle-site "https://github.com/${GITHUB_REPOSITORY}.git" qrpickle
+            rm -rf qrpickle/.git
+            mv qrpickle site/QRPickle
+          fi
+          touch site/.nojekyll
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: site
+          include-hidden-files: true
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v4
