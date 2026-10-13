@@ -13,9 +13,12 @@
       .tagline { font-size:1.25rem; margin:0 auto calc(var(--line-height) * 1rem); max-width:550px; color:#a70f0f; }
       .links small { display:block; font-size:1rem; letter-spacing:.05em; }
       .links:hover small { color:#e8e8e8; }
-      .posts { display:flex; flex-wrap:wrap; justify-content:center; align-items:flex-start; gap:1rem; margin:0 auto calc(var(--line-height) * 1rem); max-width:1100px; }
-      .posts .instagram-media { flex:1 1 326px; max-width:400px !important; min-width:300px !important; margin:0 !important; background:#fff; border:1px solid #dbdbdb; border-radius:3px; }
-      .posts blockquote > a { display:block; padding:2rem 1rem; text-align:center; }
+      .grid { display:grid; grid-template-columns:repeat(3, 1fr); gap:4px; max-width:550px; margin:0 auto calc(var(--line-height) * 1rem); }
+      .tile { --scale:.5; position:relative; display:block; aspect-ratio:1; overflow:hidden; background:#ddd; }
+      /* 58px is the embed's account header, kept out of the square. */
+      .tile iframe { position:absolute; top:calc(-58px * var(--scale)); left:0; width:326px; height:700px; border:0; transform:scale(var(--scale)); transform-origin:0 0; pointer-events:none; }
+      .tile::after { content:""; position:absolute; inset:0; }
+      .tile:hover::after, .tile:focus-visible::after { background:rgba(167, 15, 15, .25); }
       .about { margin:0 auto calc(var(--line-height) * 1rem); max-width:550px; }
     </style>
   </head>
@@ -35,19 +38,29 @@
 
     <p class="about">A few moments from past sessions:</p>
 
-    <!-- Instagram's own embed code (a post's ••• > Embed): embed.js turns each blockquote into the full post. -->
-    <div class="posts">
-      <blockquote class="instagram-media" data-instgrm-captioned data-instgrm-permalink="https://www.instagram.com/bhoomiartistscentre/reel/DVdFT3dDl4s/?utm_source=ig_embed&amp;utm_campaign=loading" data-instgrm-version="14">
-        <a href="https://www.instagram.com/bhoomiartistscentre/reel/DVdFT3dDl4s/?utm_source=ig_embed&amp;utm_campaign=loading" target="_blank" rel="noopener">View this post on Instagram</a>
-      </blockquote>
-      <blockquote class="instagram-media" data-instgrm-captioned data-instgrm-permalink="https://www.instagram.com/bharath.palavalli/reel/DVKnV58Ac5r/?utm_source=ig_embed&amp;utm_campaign=loading" data-instgrm-version="14">
-        <a href="https://www.instagram.com/bharath.palavalli/reel/DVKnV58Ac5r/?utm_source=ig_embed&amp;utm_campaign=loading" target="_blank" rel="noopener">View this post on Instagram</a>
-      </blockquote>
-      <blockquote class="instagram-media" data-instgrm-captioned data-instgrm-permalink="https://www.instagram.com/bhoomiartistscentre/p/DU8OMjMD-G4/?utm_source=ig_embed&amp;utm_campaign=loading" data-instgrm-version="14">
-        <a href="https://www.instagram.com/bhoomiartistscentre/p/DU8OMjMD-G4/?utm_source=ig_embed&amp;utm_campaign=loading" target="_blank" rel="noopener">View this post on Instagram</a>
-      </blockquote>
+    <!-- A profile-style grid: each square shows the top of Instagram's own embed of the post
+         (its URL plus embed/), and a tap opens the post on Instagram. -->
+    <div class="grid">
+      <a class="tile" href="https://www.instagram.com/bhoomiartistscentre/reel/DVdFT3dDl4s/" target="_blank" rel="noopener" aria-label="Open this tea tasting post on Instagram">
+        <iframe src="https://www.instagram.com/bhoomiartistscentre/reel/DVdFT3dDl4s/embed/" title="Tea tasting on Instagram" loading="lazy" scrolling="no" tabindex="-1"></iframe>
+      </a>
+      <a class="tile" href="https://www.instagram.com/bharath.palavalli/reel/DVKnV58Ac5r/" target="_blank" rel="noopener" aria-label="Open this tea tasting post on Instagram">
+        <iframe src="https://www.instagram.com/bharath.palavalli/reel/DVKnV58Ac5r/embed/" title="Tea tasting on Instagram" loading="lazy" scrolling="no" tabindex="-1"></iframe>
+      </a>
+      <a class="tile" href="https://www.instagram.com/bhoomiartistscentre/p/DU8OMjMD-G4/" target="_blank" rel="noopener" aria-label="Open this tea tasting post on Instagram">
+        <iframe src="https://www.instagram.com/bhoomiartistscentre/p/DU8OMjMD-G4/embed/" title="Tea tasting on Instagram" loading="lazy" scrolling="no" tabindex="-1"></iframe>
+      </a>
     </div>
-    <script async src="https://www.instagram.com/embed.js"></script>
+    <script>
+      // Instagram renders its embed at 326px or wider; scale it down to fit each square.
+      const fit = (tile) => tile.style.setProperty("--scale", tile.clientWidth / 326);
+      const tiles = document.querySelectorAll(".tile");
+      tiles.forEach(fit);
+      if ("ResizeObserver" in window) {
+        const watch = new ResizeObserver((entries) => entries.forEach((e) => fit(e.target)));
+        tiles.forEach((tile) => watch.observe(tile));
+      }
+    </script>
 
 
     <footer>
