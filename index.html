@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>QRPickle: a ham radio dashboard for the Cheap Yellow Display</title>
+  <meta name="description" content="QRPickle: a field-friendly ham radio dashboard for the ESP32 Cheap Yellow Display">
+  <link rel="stylesheet" href="site.css">
+  <script>  // theme before first paint (no flash): dark unless set to light
+    if (localStorage.getItem("theme") === "light") document.documentElement.setAttribute("data-theme", "light");
+  </script>
+
+</head>
+<body>
+  <header>
+    <div class="header-row">
+      <div>
+        <a href="" class="title"><h1>QRPickle</h1></a>
+        <p class="subtitle">A lightweight, opinionated, field-friendly HAM Clock</p>
+      </div>
+      <button id="theme-toggle" class="theme-toggle-btn" aria-label="Toggle light/dark mode" onclick="toggleTheme()">☀️ | 🌙</button>
+    </div>
+    <nav>
+      <a href="" class="active">Home</a>
+      <a href="install/">Install</a>
+      <a href="manual/">Manual</a>
+      <a href="space/">Space feed</a>
+      <a href="https://github.com/bmp/QRPickle/releases">Releases</a>
+      <a href="https://github.com/bmp/QRPickle">Source</a>
+      <a href="https://ham.bharathpalavalli.com/">Getting On The Air</a>
+      <a href="&#109;&#97;&#105;&#108;&#116;&#111;&#58;&#118;&#117;&#51;&#103;&#108;&#106;&#64;&#100;&#105;&#115;&#114;&#111;&#111;&#116;&#46;&#111;&#114;&#103;">Contact</a>
+    </nav>
+  </header>
+  <main>
+<section class="hero">
+  <img src="tour.gif" width="480" height="360" alt="A tour of QRPickle's screens: dashboard, band conditions, satellites, DX cluster, POTA, SOTA, APRS, HamAlert, weather, updates and settings">
+  <p><em>The screens, as shown on the device.</em></p>
+</section>
+<p><strong>QRPickle</strong> turns an ESP32 "Cheap Yellow Display" (CYD) into a field-friendly ham radio
+   dashboard: DX cluster, POTA and SOTA activators, HamAlert, APRS, band conditions, satellite passes with
+   ISS SSTV events, weather and a clock, on a 2.8" touchscreen. Everything is set up from a web console on
+   the device, and updates arrive over WiFi.</p>
+<div class="actions">
+  <a class="btn-link primary" href="install/">Install from your browser</a>
+  <a class="btn-link" href="manual/">Manual</a>
+</div>
+<h3>Features</h3>
+<ul class="features">
+  <li><strong>DX Cluster:</strong> live spots from DX cluster servers, filtered by band and mode.</li>
+  <li><strong>POTA and SOTA:</strong> activators on air, filtered by band, mode and QRP.</li>
+  <li><strong>HamAlert:</strong> spots matching your own triggers.</li>
+  <li><strong>APRS:</strong> stations heard (list and radar), messages and your position beacon, over APRS-IS.</li>
+  <li><strong>Band conditions:</strong> 11 bands rated for day and night at your location, greyline and sunrise/sunset, from HAMQSL.com solar data.</li>
+  <li><strong>Satellites:</strong> the next passes of popular amateur satellites over your station, ISS SSTV events and school contacts, with an LED reminder.</li>
+  <li><strong>Weather and clock:</strong> local and UTC time, an optional indoor sensor, OpenWeather conditions and forecast.</li>
+  <li><strong>Made for the field:</strong> screen cycling, 7 themes including red and E-Ink styles, automatic brightness, a status LED.</li>
+  <li><strong>Easy to run:</strong> a web console for every setting, profiles for home and field, updates over WiFi.</li>
+  <li><strong>Private and open:</strong> passes and band ratings are worked out on the device, your location stays there; MIT-licensed, <a href="https://github.com/bmp/QRPickle">source on GitHub</a>.</li>
+</ul>
+<p>Read about the project in <a href="https://ham.bharathpalavalli.com/posts/20260525174115-qrpickle/">the QRPickle article</a>
+   on Getting On The Air.</p>
+  </main>
+  <footer><small>QRPickle by VU3GLJ is MIT-licensed and includes fonts under the SIL Open Font License 1.1 and other
+     components: see the <a href="https://github.com/bmp/QRPickle/blob/main/THIRD_PARTY_NOTICES.md">third-party notices</a>.
+     Part of <a href="https://quixotic.bharathpalavalli.com/">Quixotic Pursuits</a>.</small></footer>
+  <script src="site.js"></script>
+
+</body>
+</html>
