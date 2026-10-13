@@ -13,7 +13,9 @@
       .tagline { font-size:1.25rem; margin:0 auto calc(var(--line-height) * 1rem); max-width:550px; color:#a70f0f; }
       .links small { display:block; font-size:1rem; letter-spacing:.05em; }
       .links:hover small { color:#e8e8e8; }
-      .instagram { display:block; width:100%; max-width:540px; height:780px; margin:0 auto calc(var(--line-height) * 1rem); border:1px solid #dbdbdb; border-radius:4px; background:#fff; }
+      .posts { display:flex; flex-wrap:wrap; justify-content:center; align-items:flex-start; gap:1rem; margin:0 auto calc(var(--line-height) * 1rem); max-width:1100px; }
+      .posts .instagram-media { flex:1 1 326px; max-width:400px !important; min-width:300px !important; margin:0 !important; background:#fff; border:1px solid #dbdbdb; border-radius:3px; }
+      .posts blockquote > a { display:block; padding:2rem 1rem; text-align:center; }
       .about { margin:0 auto calc(var(--line-height) * 1rem); max-width:550px; }
     </style>
   </head>
@@ -25,17 +27,27 @@
       </div>
     </header>
     <p class="tagline">Tea Tasting</p>
-    <p class="about">Sit down with me over a few cups of tea: we taste them side by side, talk about where each comes from, and learn to notice what is in the cup. Sessions are for one person or a small group.</p>
-    <p class="about">To book a slot, write to me with the dates and times that suit you and how many of you will come, and I'll get back to you to confirm.</p>
+    <p class="about">Sit down with me over a few cups of tea: we taste them side by side, talk about where each comes from, and learn to notice what is in the cup. Sessions work best with a small group of 6 to 10 people.</p>
+    <p class="about">To book a slot, email me or send me a message on Instagram with the dates and times that suit you and how many of you will come. I'll get back to you to confirm.</p>
 
-    <a class="links" href="&#109;&#97;&#105;&#108;&#116;&#111;&#58;&#109;&#97;&#105;&#108;&#64;&#98;&#104;&#97;&#114;&#97;&#116;&#104;&#112;&#97;&#108;&#97;&#118;&#97;&#108;&#108;&#105;&#46;&#99;&#111;&#109;&#63;&#115;&#117;&#98;&#106;&#101;&#99;&#116;&#61;&#84;&#101;&#97;&#37;&#50;&#48;&#116;&#97;&#115;&#116;&#105;&#110;&#103;&#37;&#50;&#48;&#115;&#108;&#111;&#116;&#38;&#98;&#111;&#100;&#121;&#61;&#72;&#105;&#37;&#50;&#48;&#66;&#104;&#97;&#114;&#97;&#116;&#104;&#37;&#50;&#67;&#37;&#48;&#65;&#37;&#48;&#65;&#73;&#37;&#50;&#55;&#100;&#37;&#50;&#48;&#108;&#105;&#107;&#101;&#37;&#50;&#48;&#116;&#111;&#37;&#50;&#48;&#98;&#111;&#111;&#107;&#37;&#50;&#48;&#97;&#37;&#50;&#48;&#116;&#101;&#97;&#37;&#50;&#48;&#116;&#97;&#115;&#116;&#105;&#110;&#103;&#46;&#37;&#48;&#65;&#37;&#48;&#65;&#80;&#114;&#101;&#102;&#101;&#114;&#114;&#101;&#100;&#37;&#50;&#48;&#100;&#97;&#116;&#101;&#37;&#50;&#48;&#97;&#110;&#100;&#37;&#50;&#48;&#116;&#105;&#109;&#101;&#37;&#51;&#65;&#37;&#48;&#65;&#78;&#117;&#109;&#98;&#101;&#114;&#37;&#50;&#48;&#111;&#102;&#37;&#50;&#48;&#112;&#101;&#111;&#112;&#108;&#101;&#37;&#51;&#65;&#37;&#48;&#65;">Book a tea tasting<small>Email me for a slot</small></a>
+    <a class="links" href="&#109;&#97;&#105;&#108;&#116;&#111;&#58;&#109;&#97;&#105;&#108;&#64;&#98;&#104;&#97;&#114;&#97;&#116;&#104;&#112;&#97;&#108;&#97;&#118;&#97;&#108;&#108;&#105;&#46;&#99;&#111;&#109;&#63;&#115;&#117;&#98;&#106;&#101;&#99;&#116;&#61;&#84;&#101;&#97;&#37;&#50;&#48;&#116;&#97;&#115;&#116;&#105;&#110;&#103;&#37;&#50;&#48;&#115;&#108;&#111;&#116;&#38;&#98;&#111;&#100;&#121;&#61;&#72;&#105;&#37;&#50;&#48;&#66;&#104;&#97;&#114;&#97;&#116;&#104;&#37;&#50;&#67;&#37;&#48;&#65;&#37;&#48;&#65;&#73;&#37;&#50;&#55;&#100;&#37;&#50;&#48;&#108;&#105;&#107;&#101;&#37;&#50;&#48;&#116;&#111;&#37;&#50;&#48;&#98;&#111;&#111;&#107;&#37;&#50;&#48;&#97;&#37;&#50;&#48;&#116;&#101;&#97;&#37;&#50;&#48;&#116;&#97;&#115;&#116;&#105;&#110;&#103;&#46;&#37;&#48;&#65;&#37;&#48;&#65;&#80;&#114;&#101;&#102;&#101;&#114;&#114;&#101;&#100;&#37;&#50;&#48;&#100;&#97;&#116;&#101;&#37;&#50;&#48;&#97;&#110;&#100;&#37;&#50;&#48;&#116;&#105;&#109;&#101;&#37;&#51;&#65;&#37;&#48;&#65;&#78;&#117;&#109;&#98;&#101;&#114;&#37;&#50;&#48;&#111;&#102;&#37;&#50;&#48;&#112;&#101;&#111;&#112;&#108;&#101;&#37;&#50;&#48;&#37;&#50;&#56;&#54;&#45;&#49;&#48;&#37;&#50;&#57;&#37;&#51;&#65;&#37;&#48;&#65;">Book by email<small>Write to me for a slot</small></a>
+    <a class="links" href="https://ig.me/m/bharath.palavalli" target="_blank" rel="noopener">Book on Instagram<small>Send me a DM</small></a>
 
     <p class="about">A few moments from past sessions:</p>
 
-    <!-- Instagram's own embed of each post (its URL plus embed/captioned/). -->
-    <iframe class="instagram" src="https://www.instagram.com/bhoomiartistscentre/reel/DVdFT3dDl4s/embed/captioned/" title="Instagram post: tea tasting" loading="lazy" allowtransparency="true" allowfullscreen></iframe>
-    <iframe class="instagram" src="https://www.instagram.com/bharath.palavalli/reel/DVKnV58Ac5r/embed/captioned/" title="Instagram post: tea tasting" loading="lazy" allowtransparency="true" allowfullscreen></iframe>
-    <iframe class="instagram" src="https://www.instagram.com/bhoomiartistscentre/p/DU8OMjMD-G4/embed/captioned/" title="Instagram post: tea tasting" loading="lazy" allowtransparency="true" allowfullscreen></iframe>
+    <!-- Instagram's own embed code (a post's ••• > Embed): embed.js turns each blockquote into the full post. -->
+    <div class="posts">
+      <blockquote class="instagram-media" data-instgrm-captioned data-instgrm-permalink="https://www.instagram.com/bhoomiartistscentre/reel/DVdFT3dDl4s/?utm_source=ig_embed&amp;utm_campaign=loading" data-instgrm-version="14">
+        <a href="https://www.instagram.com/bhoomiartistscentre/reel/DVdFT3dDl4s/?utm_source=ig_embed&amp;utm_campaign=loading" target="_blank" rel="noopener">View this post on Instagram</a>
+      </blockquote>
+      <blockquote class="instagram-media" data-instgrm-captioned data-instgrm-permalink="https://www.instagram.com/bharath.palavalli/reel/DVKnV58Ac5r/?utm_source=ig_embed&amp;utm_campaign=loading" data-instgrm-version="14">
+        <a href="https://www.instagram.com/bharath.palavalli/reel/DVKnV58Ac5r/?utm_source=ig_embed&amp;utm_campaign=loading" target="_blank" rel="noopener">View this post on Instagram</a>
+      </blockquote>
+      <blockquote class="instagram-media" data-instgrm-captioned data-instgrm-permalink="https://www.instagram.com/bhoomiartistscentre/p/DU8OMjMD-G4/?utm_source=ig_embed&amp;utm_campaign=loading" data-instgrm-version="14">
+        <a href="https://www.instagram.com/bhoomiartistscentre/p/DU8OMjMD-G4/?utm_source=ig_embed&amp;utm_campaign=loading" target="_blank" rel="noopener">View this post on Instagram</a>
+      </blockquote>
+    </div>
+    <script async src="https://www.instagram.com/embed.js"></script>
 
 
     <footer>
