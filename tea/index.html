@@ -14,11 +14,9 @@
       .links small { display:block; font-size:1rem; letter-spacing:.05em; }
       .links:hover small { color:#e8e8e8; }
       .grid { display:grid; grid-template-columns:repeat(3, 1fr); gap:4px; max-width:550px; margin:0 auto calc(var(--line-height) * 1rem); }
-      .tile { --scale:.5; position:relative; display:block; aspect-ratio:1; overflow:hidden; background:#ddd; }
-      /* 58px is the embed's account header, kept out of the square. */
-      .tile iframe { position:absolute; top:calc(-58px * var(--scale)); left:0; width:326px; height:700px; border:0; transform:scale(var(--scale)); transform-origin:0 0; pointer-events:none; }
-      .tile::after { content:""; position:absolute; inset:0; }
-      .tile:hover::after, .tile:focus-visible::after { background:rgba(167, 15, 15, .25); }
+      .tile { display:block; aspect-ratio:1; overflow:hidden; background:#ddd; }
+      .tile img { display:block; width:100%; height:100%; object-fit:cover; transition:opacity .2s; }
+      .tile:hover img, .tile:focus-visible img { opacity:.8; }
       .about { margin:0 auto calc(var(--line-height) * 1rem); max-width:550px; }
     </style>
   </head>
@@ -38,29 +36,12 @@
 
     <p class="about">A few moments from past sessions:</p>
 
-    <!-- A profile-style grid: each square shows the top of Instagram's own embed of the post
-         (its URL plus embed/), and a tap opens the post on Instagram. -->
+    <!-- A profile-style grid: one square photo per post, each opening the post on Instagram. -->
     <div class="grid">
-      <a class="tile" href="https://www.instagram.com/bhoomiartistscentre/reel/DVdFT3dDl4s/" target="_blank" rel="noopener" aria-label="Open this tea tasting post on Instagram">
-        <iframe src="https://www.instagram.com/bhoomiartistscentre/reel/DVdFT3dDl4s/embed/" title="Tea tasting on Instagram" loading="lazy" scrolling="no" tabindex="-1"></iframe>
-      </a>
-      <a class="tile" href="https://www.instagram.com/bharath.palavalli/reel/DVKnV58Ac5r/" target="_blank" rel="noopener" aria-label="Open this tea tasting post on Instagram">
-        <iframe src="https://www.instagram.com/bharath.palavalli/reel/DVKnV58Ac5r/embed/" title="Tea tasting on Instagram" loading="lazy" scrolling="no" tabindex="-1"></iframe>
-      </a>
-      <a class="tile" href="https://www.instagram.com/bhoomiartistscentre/p/DU8OMjMD-G4/" target="_blank" rel="noopener" aria-label="Open this tea tasting post on Instagram">
-        <iframe src="https://www.instagram.com/bhoomiartistscentre/p/DU8OMjMD-G4/embed/" title="Tea tasting on Instagram" loading="lazy" scrolling="no" tabindex="-1"></iframe>
-      </a>
+      <a class="tile" href="https://www.instagram.com/bhoomiartistscentre/p/DU8OMjMD-G4/" target="_blank" rel="noopener"><img src="img/bhoomi.jpg" alt="Tea Appreciation Workshop at Bhoomi Artists' Centre, 1 March 2026" width="600" height="600" loading="lazy"></a>
+      <a class="tile" href="https://www.instagram.com/p/DL4Cb_RyRuu/" target="_blank" rel="noopener"><img src="img/atta-galatta.jpg" alt="A Tea Appreciation Workshop at Atta Galatta, 12 July 2025" width="600" height="600" loading="lazy"></a>
+      <a class="tile" href="https://www.instagram.com/bharath.palavalli/reel/DVKnV58Ac5r/" target="_blank" rel="noopener"><img src="img/teapot.jpg" alt="A stoneware teapot and cups on a dragonfly plate" width="600" height="600" loading="lazy"></a>
     </div>
-    <script>
-      // Instagram renders its embed at 326px or wider; scale it down to fit each square.
-      const fit = (tile) => tile.style.setProperty("--scale", tile.clientWidth / 326);
-      const tiles = document.querySelectorAll(".tile");
-      tiles.forEach(fit);
-      if ("ResizeObserver" in window) {
-        const watch = new ResizeObserver((entries) => entries.forEach((e) => fit(e.target)));
-        tiles.forEach((tile) => watch.observe(tile));
-      }
-    </script>
 
 
     <footer>
