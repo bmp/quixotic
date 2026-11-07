@@ -1,0 +1,92 @@
+{
+  "latest": "v0.3.0",
+  "versions": [
+    {
+      "version": "v0.3.0",
+      "manifest": "v0.3.0/manifest.json",
+      "notes": "New platform with security updates, POTA spots load again when you open xOTA, faster WiFi recovery, and data that says how old it is\n\nUpdate with Cloud OTA (from v0.2.8) or the web console; your settings,\nprofiles and logos stay. This release moves to a newer platform (Arduino\ncore 3 / ESP-IDF 5): going back to v0.2.x needs a web console upload of\nthat version.\n\nNew\n- Weather (OpenWeather tab) and xOTA (POTA tab) say how old their data is\n  (\"updated 5 min ago\"), in the warning colour when it is stale.\n- The firmware runs on Arduino core 3.3.12 / ESP-IDF 5.5, which still gets\n  security fixes (TLS included); v0.2.x used a platform that no longer\n  does.\n\nFixes\n- Opening xOTA by hand never loaded POTA spots while HamAlert or APRS-IS\n  was on (since v0.2.8; screen cycling still worked).\n- Leaving xOTA no longer reconnects the DX cluster in the background\n  (it held about 5 KB of memory for nothing).\n- After a missed WiFi connect at start-up the device tries the saved\n  network every 15 seconds for 5 minutes (was every minute), and the log\n  says why the connection failed.\n- HamAlert, APRS-IS and the DX and SOTA clusters notice a dead connection\n  (after a router restart, for example) and reconnect, instead of looking\n  connected with no data. The Spots page reconnects DX while it is open.\n- More free memory for downloads: unused spot lists are freed, task stacks\n  are sized from measurements, and downloads no longer start while\n  another one is running.\n- The satellite feed download can no longer hang (it waited for the\n  server to close the connection).\n- When a server has several addresses and one doesn't answer from your\n  network, the device tries the next one. The satellite feed failed now\n  and then because one of GitHub's addresses was unreachable from some\n  networks; Cloud OTA and every other download now do the same.\n\nFor developers\n- /api/status: `fresh` (age, failures and state per data source); free\n  stack of the network and timer tasks.\n- docs/DATA_FLOW.md lists every download and background job; its table is\n  generated from src/services/sources.h and checked by the build.\n- Building needs Python 3.14 or older and PlatformIO 6.2.0, also inside\n  pioarduino's own environment (docs/DEVELOPMENT.md).",
+      "sizes": {
+        "bootloader.bin": 23520,
+        "partitions.bin": 3072,
+        "boot_app0.bin": 8192,
+        "firmware.bin": 1598880,
+        "littlefs.bin": 458752
+      }
+    },
+    {
+      "version": "v0.2.8",
+      "manifest": "v0.2.8/manifest.json",
+      "notes": "Downloads work while screens cycle, no crash on the xOTA screen, and a splash logo preview\n\nUpdate with Cloud OTA (from v0.2.7) or the web console. The web console\nfiles changed (the preview button): also upload littlefs.bin in the web\nconsole, which keeps your profiles and logos.\n\nNew\n- Web console, Splash Logos: \"Preview on the device\" shows the start screen\n  with your logos for 10 seconds (or until you tap it), without a restart.\n- GitHub: security policy (report vulnerabilities privately), contributing\n  guide, code of conduct, accessibility notes, and issue and pull request\n  templates.\n\nFixes\n- The device could restart on the xOTA screen while the web console was\n  open: the web server ran out of memory during the login. It now turns a\n  request away when memory is low instead.\n- While screens cycle, POTA spots, the satellite feed and the update check\n  download again (they all failed for memory, also in v0.2.7). Measured on\n  the device over 2 x 30 minutes of cycling: every download OK (was none).\n- Turning cycling off while the DX cluster was connected in the background\n  left it running unread, and its spots filled the memory (20 KB within\n  minutes). It now disconnects.\n- HamAlert and APRS-IS stay connected during downloads instead of\n  reconnecting after each one (the reconnects split the free memory).\n- xOTA and APRS lists use less screen memory (xOTA 49.5 -> 33.5 KB,\n  APRS 44.1 -> 33.9 KB), so the screen memory pool is 16 KB smaller and that\n  memory goes to downloads.\n- The device could restart (watchdog) when a weather update was due while\n  another download was running: the screen waited for the network for up to\n  40 seconds. Weather now tries again 30 seconds later instead.\n- A firmware or filesystem upload in the web console failed (\"Could Not\n  Activate The Firmware\" or \"SESSION_ABORTED\") when the upload before it had\n  been cut off. Each upload now starts clean.\n- Switching APRS-IS on or off in the web console (or with a profile) takes\n  effect at once; it used to wait for a restart.\n- A download that never finishes can no longer keep the device off the\n  network: after 3 minutes the device restarts and /api/status names the\n  task that was stuck.\n- The log no longer reports a skipped weather update as \"OK\".\n\nFor developers\n- /api/status: memory per download job, fragmentation, screen memory per\n  page, refused web requests, the reset reason, the background connections\n  (links), and the task behind a network-lock restart; [HEAP] lines trace\n  the boot.",
+      "sizes": {
+        "bootloader.bin": 17536,
+        "partitions.bin": 3072,
+        "boot_app0.bin": 8192,
+        "firmware.bin": 1588576,
+        "littlefs.bin": 458752
+      }
+    },
+    {
+      "version": "v0.2.7",
+      "manifest": "v0.2.7/manifest.json",
+      "notes": "Cloud OTA can install updates again\n\nUpdating from v0.2.6 or earlier: upload firmware.bin in the web console\n(System Info, firmware); settings are kept. Cloud OTA on those versions finds\nthe update but can't install it (this release fixes that). From v0.2.7 on,\nCloud OTA installs updates by itself. The web console files are unchanged\n(no littlefs.bin needed).\n\nFixes\n- Cloud OTA: installing an update failed right after the download started\n  (\"No Error\"): with the HTTPS connection open, the device had no 4 KB left\n  for the updater. The updater now reserves its memory first. Checked on the\n  device: download, SHA-256 check, install and restart into the new version.\n- No error lines in the log when no custom splash logo is set.",
+      "sizes": {
+        "bootloader.bin": 17536,
+        "partitions.bin": 3072,
+        "boot_app0.bin": 8192,
+        "firmware.bin": 1581776,
+        "littlefs.bin": 458752
+      }
+    },
+    {
+      "version": "v0.2.6",
+      "manifest": "v0.2.6/manifest.json",
+      "notes": "Your own splash logos, cycling order, saved-secret hints, a lighter DX page; theme and LED fixes\n\nUpdating from v0.2.5: Cloud OTA (device or web console) or upload firmware.bin;\nsettings are kept. Then upload littlefs.bin (web console: System Info, \"LittleFS\nStorage Image\") for the new web console. Download a backup first (Profiles,\nBackup and Restore): this first update still runs from the old console, which\nerases profiles. From v0.2.6 on, the console keeps them. On v0.2.5 the update\ncheck often fails (fixed in v0.2.6) but retries every 10 minutes until it gets\nthrough; uploading firmware.bin in the web console works at once.\n\nNew\n- Splash logos: your own logo left and/or right of the title on the start\n  screen (a club logo, a callsign badge). Upload any image in the web console\n  (System Info, Splash Logos); it is scaled into 60 x 60 in the browser, with a\n  preview. Kept across updates and included in backups. A PNG with a\n  transparent background looks best.\n- Screen cycling in your order: the web console lists the screens with up and\n  down arrows.\n- Saved passwords and keys show their last 2 characters in the web console\n  (\"saved, ends in \u2022\u20224f\"; only for 6 or more characters), and each has a\n  Clear button. Backups still contain no secrets.\n\nChanges\n- A filesystem update in the web console keeps your profiles and logos: it\n  saves them first and writes them back after the restart (profiles without\n  their own passwords and keys, as with a backup).\n- Backups include your splash logos.\n- The weather icons are 36 x 36 (were 40 x 40): each fits one 4 KB block of\n  the filesystem, which frees 72 KB.\n- The DX Cluster page says what it is doing (\"CONNECTED: waiting for\n  spots...\") instead of showing an empty list, and needs much less memory\n  (one line per spot).\n- Home and refresh are in the same place on every page (bottom right), and\n  nothing else sits under them.\n- The satellite feed is retried after 2 and 5 minutes when a download fails\n  (it waited 15); its sources are a list (AMSAT orbits when CelesTrak is down).\n\nFixes\n- Cloud OTA can check for updates again: the certificate check ran out of\n  memory during the connection and failed almost every time (also on v0.2.5).\n  The certificate is now checked between two connections, with the memory\n  free; the security is the same.\n- Changing the theme now recolours the whole screen at once: the background,\n  the home button and the menu kept the old theme until a restart (in E-Ink\n  Light the home icon was faint and the Network page unreadable).\n- The status LED stays amber while the setup hotspot is up, as documented; it\n  used to go dark at the end of the start-up.\n- Opening a page while Settings was open left Settings on top.",
+      "sizes": {
+        "bootloader.bin": 17536,
+        "partitions.bin": 3072,
+        "boot_app0.bin": 8192,
+        "firmware.bin": 1581680,
+        "littlefs.bin": 458752
+      }
+    },
+    {
+      "version": "v0.2.5",
+      "manifest": "v0.2.5/manifest.json",
+      "notes": "Satellites and SSTV, screen cycling, more settings on the device; more free memory\n\nUpdating from v0.2.4: Cloud OTA (device or web console) or upload firmware.bin;\nsettings are kept. The new web console settings (screen cycling, satellites)\nalso need littlefs.bin (web console: System Info, \"LittleFS Storage Image\").\nWriting the filesystem erases profiles, so back them up first (Profiles,\nBackup and Restore).\n\nNew\n- Satellites screen: the next passes of popular amateur satellites over your\n  station (FM, linear, SSTV, voice beacons, optionally APRS), with times,\n  directions and frequencies; ISS SSTV events and ARISS school contacts, with\n  whether the ISS is above your horizon for a contact. Passes are computed on\n  the device from orbits updated every 6 hours; your location is not sent.\n- The status LED blinks purple before an ISS SSTV or school-contact pass (30\n  minutes ahead by default) and breathes during it. Configurable in the web\n  console, switchable on the device.\n- Screen cycling: chosen screens in turn (10 seconds each by default). A touch\n  pauses it; it resumes after 2 minutes. An icon in the status bar shows it\n  and pauses or resumes it.\n- Device Settings: APRS, screen cycling and pass alerts on/off.\n- Web console: automatic brightness (light sensor) on/off.\n- A page about the satellite feed on the project site.\n\nFixed\n- The automatic update check failed for lack of memory; about 16 KB more\n  memory is free while running.\n- APRS sent a position beacon on every reconnect.\n- xOTA showed an empty POTA list without a word when the download failed.\n- The APRS beacon tab's status line ran into the beacon count.\n\n\n\nReal band conditions from HAMQSL.com, privacy masks, screenshots; memory and crash fixes\n\nUpdating from v0.2.3: Cloud OTA (device or web console) or upload firmware.bin;\nsettings are kept. The new web console settings (own solar data source, band\ngroups on the dashboard, \"use latitude/longitude\") and the About credits also\nneed littlefs.bin (web console: System Info, \"LittleFS Storage Image\").\nWriting the filesystem erases profiles, so back them up first (Profiles,\nBackup and Restore). Without it the device works; those settings are missing.\n\nFixed\n- The device could restart after opening Weather and then DX Cluster (the\n  display library ran out of memory).\n- The automatic update check often failed at boot and was not tried again\n  until the next restart; it now starts 2 minutes after boot and retries\n  every 10 minutes.\n- A failed OpenWeather update was retried after 2 hours; now after 5 minutes.\n- Forecast temperatures were nearly invisible.\n- Downloads could fail when HamAlert and APRS were restarted in the middle of\n  another download.\n\nNew\n- Real solar data (SFI, K, A, X-ray, solar wind, Bz, noise) from HAMQSL.com,\n  courtesy of N0NBH, every 3 hours (hourly in storms), or from your own source.\n  Before, the screens showed fixed start-up values.\n- Band conditions for 11 bands (160 m to 6 m), day and night at your location,\n  with greyline and the next sunrise or sunset. The screen has three tabs:\n  BANDS, SOLAR (each indicator with a scale and what it means) and GUIDE.\n- Dashboard band tile: choose which band groups it shows (web console).\n- Your latitude/longitude (or the grid square) set day and night.\n- Privacy: the admin password is masked on the Network screen (tap the eye\n  to show it for 10 seconds) and in the serial log.\n\nChanged\n- The firmware is 66 KB smaller (81.9 % of the update slot).\n- The web console shows latitude and longitude side by side.\n\nFor developers\n- docs/UI_GUIDE.md (also a manual appendix) and docs/MEMORY.md.\n- tools/device_screens.py captures every screen, tabs and menu included;\n  screenshot builds hide network names, addresses and positions.\n- scripts/dev.sh format; /api/status reports memory figures.",
+      "sizes": {
+        "bootloader.bin": 17536,
+        "partitions.bin": 3072,
+        "boot_app0.bin": 8192,
+        "firmware.bin": 1575264,
+        "littlefs.bin": 458752
+      }
+    }
+  ],
+  "parts": [
+    {
+      "path": "bootloader.bin",
+      "offset": "0x1000",
+      "what": "ESP32 bootloader"
+    },
+    {
+      "path": "partitions.bin",
+      "offset": "0x8000",
+      "what": "Partition table"
+    },
+    {
+      "path": "boot_app0.bin",
+      "offset": "0xE000",
+      "what": "otadata: start from app0"
+    },
+    {
+      "path": "firmware.bin",
+      "offset": "0x10000",
+      "what": "Firmware (app0)"
+    },
+    {
+      "path": "littlefs.bin",
+      "offset": "0x390000",
+      "what": "Web console files (LittleFS); erases saved profiles"
+    }
+  ]
+}
