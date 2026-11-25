@@ -1,0 +1,1 @@
+{"version": "v0.3.2", "notes": "v0.3.2: QRPickle knows which CYD it runs on: one board list, detection at start-up or your choice, reports for untested boards ", "firmware": "firmware.bin", "sha256": "1132c47a213f99862bea7c3cdd32554030db9a67b784bd0ba148a2c866ae584c"}

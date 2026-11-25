@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Set up QRPickle over USB</title>
+  <meta name="description" content="QRPickle: a field-friendly ham radio dashboard for the ESP32 Cheap Yellow Display">
+  <link rel="stylesheet" href="../site.css">
+  <script>  // theme before first paint (no flash): dark unless set to light
+    if (localStorage.getItem("theme") === "light") document.documentElement.setAttribute("data-theme", "light");
+  </script>
+
+</head>
+<body>
+  <header>
+    <div class="header-row">
+      <div>
+        <a href="../" class="title"><h1>QRPickle</h1></a>
+        <p class="subtitle">A lightweight, opinionated, field-friendly HAM Clock</p>
+      </div>
+      <button id="theme-toggle" class="theme-toggle-btn" aria-label="Toggle light/dark mode" onclick="toggleTheme()">☀️ | 🌙</button>
+    </div>
+    <nav>
+      <a href="../">Home</a>
+      <a href="../install/">Install</a>
+      <a href="../setup/" class="active">Set up over USB</a>
+      <a href="../manual/">Manual</a>
+      <a href="../space/">Space feed</a>
+      <a href="https://github.com/bmp/QRPickle/releases">Releases</a>
+      <a href="https://github.com/bmp/QRPickle">Source</a>
+      <a href="https://ham.bharathpalavalli.com/">Getting On The Air</a>
+      <a href="&#109;&#97;&#105;&#108;&#116;&#111;&#58;&#118;&#117;&#51;&#103;&#108;&#106;&#64;&#100;&#105;&#115;&#114;&#111;&#111;&#116;&#46;&#111;&#114;&#103;">Contact</a>
+    </nav>
+  </header>
+  <main>
+  <h2>Set up QRPickle over USB</h2>
+<p>Send your callsign, location, WiFi and keys to a CYD on the USB cable, straight from this page, without
+   joining its <code>QRPickle-Setup</code> hotspot. Works with QRPickle v0.3.1 or newer, in
+   <strong>Chrome or Edge</strong> on a computer. Nothing you type here leaves your computer except over the
+   USB cable to the board.</p>
+<p class="small">Fields you leave empty keep what the board has. Everything else (profiles, APRS, DX servers,
+   screen cycling) is in the web console afterwards.</p>
+
+<form id="setup-form" class="setup" onsubmit="return false;">
+  <fieldset>
+    <legend>Station</legend>
+    <label>Callsign <input id="callsign" maxlength="11" autocomplete="off"></label>
+    <label>Grid square <input id="grid" maxlength="6" autocomplete="off"></label>
+    <label>Latitude <input id="lat" inputmode="decimal" placeholder="optional, e.g. 12.97"></label>
+    <label>Longitude <input id="lon" inputmode="decimal" placeholder="optional, e.g. 77.59"></label>
+    <label>UTC offset (hours) <input id="offset" inputmode="decimal" placeholder="e.g. 5.5"></label>
+  </fieldset>
+  <fieldset>
+    <legend>Units and clock</legend>
+    <label>Local clock <select id="clock"><option value="0">24-hour (14:05)</option><option value="1">12-hour (2:05 PM)</option></select></label>
+    <label class="check"><input type="checkbox" id="metric" checked> Metric units (°C, hPa, m/s, km)</label>
+    <div id="units" class="hidden">
+      <label>Temperature <select id="unit_temp"><option value="0">°C</option><option value="1">°F</option></select></label>
+      <label>Pressure <select id="unit_pres"><option value="0">hPa</option><option value="1">inHg</option></select></label>
+      <label>Wind <select id="unit_wind"><option value="0">m/s</option><option value="1">km/h</option><option value="2">mph</option><option value="3">knots</option></select></label>
+      <label>Distance <select id="unit_dist"><option value="0">km</option><option value="1">miles</option></select></label>
+    </div>
+  </fieldset>
+  <fieldset>
+    <legend>WiFi (2.4 GHz)</legend>
+    <label>Network name <input id="ssid" maxlength="32" autocomplete="off"></label>
+    <label>Password <input id="password" type="password" maxlength="63" autocomplete="off"></label>
+    <p class="small">Changing the WiFi restarts the board so it joins the network.</p>
+  </fieldset>
+  <fieldset>
+    <legend>Accounts (optional)</legend>
+    <label>OpenWeather API key <input id="apikey" maxlength="39" autocomplete="off"></label>
+    <label>HamAlert password <input id="hamalert_pass" type="password" maxlength="32" autocomplete="off"></label>
+    <label>APRS-IS passcode <input id="aprs_pass" type="password" maxlength="7" autocomplete="off"></label>
+  </fieldset>
+  <p><button id="send" class="install-btn" type="button">Connect and send</button></p>
+</form>
+<p id="unsupported" class="note hidden">This browser can't access USB serial ports. Use Chrome or Edge on a computer.</p>
+<p id="insecure" class="note hidden">This page needs a secure address to reach the USB port: open it over
+   <code>https://</code>, or as <code>http://localhost:…</code> when you serve it yourself (not
+   <code>0.0.0.0</code> or a network address).</p>
+<div id="status" class="msg msg-info hidden" role="status"></div>
+<p class="small">"No answer from the board"? Close other programs using the port (and the installer's dialog),
+   replug the cable and try again. On Linux run <code>stty -F /dev/ttyUSB0 115200</code> first (see the
+   <a href="../install/">Install</a> page).</p>
+
+<section class="board-card" aria-labelledby="board-title">
+  <h3 id="board-title">Board (optional)</h3>
+  <p class="small">Only needed if the CYD's screen stays dark or shows the wrong board (v0.3.2 or newer).
+     Setup above doesn't need it.</p>
+  <p><button id="board-check" type="button">Check which board the CYD detected</button>
+     <span class="small">reads it over USB, changes nothing</span></p>
+  <div id="board-found" class="msg msg-info hidden" role="status"></div>
+  <p><label>Change the board to <select id="board">
+      <option value="auto">Auto-detect (recommended)</option>
+    </select></label>
+     <span class="small">Check the number printed on the back first
+       (<a href="#" id="board-photo-link">where to look</a>).</span></p>
+  <img id="board-photo" class="board-photo hidden" src="../boards/2432S028R-2USB-back.jpg"
+       alt="The back of an ESP32-2432S028R: the model number is printed on the board">
+  <p><button id="board-send" type="button">Send the board choice</button>
+     <span class="small">sends only this; the CYD restarts if it changes</span></p>
+  <div id="board-msg" class="msg msg-info hidden" role="status"></div>
+  <div id="board-report" class="hidden">
+    <h4>Report how this board works</h4>
+    <p class="small">Opens GitHub's "Board report" form with the details filled in; you sign in, attach a photo
+       of the back and submit. Nothing is sent from this page.</p>
+    <label>Number printed on the back <input id="board-back" maxlength="40" placeholder="e.g. ESP32-2432S028R"></label>
+    <div class="board-works">What works:
+      <label class="check"><input type="checkbox" data-work="picture"> Picture</label>
+      <label class="check"><input type="checkbox" data-work="colours"> Colours</label>
+      <label class="check"><input type="checkbox" data-work="orientation"> Right way up</label>
+      <label class="check"><input type="checkbox" data-work="touch"> Touch</label>
+      <label class="check"><input type="checkbox" data-work="backlight"> Backlight</label>
+      <label class="check"><input type="checkbox" data-work="led"> LED</label>
+      <label class="check"><input type="checkbox" data-work="sensor"> Sensor</label>
+    </div>
+    <label>Notes <textarea id="board-notes" rows="3" maxlength="2000"></textarea></label>
+    <p><button id="board-report-open" type="button">Open report on GitHub</button></p>
+  </div>
+</section>
+  </main>
+  <footer><small>QRPickle by VU3GLJ is MIT-licensed and includes fonts under the SIL Open Font License 1.1 and other
+     components: see the <a href="https://github.com/bmp/QRPickle/blob/main/THIRD_PARTY_NOTICES.md">third-party notices</a>.
+     Part of <a href="https://quixotic.bharathpalavalli.com/">Quixotic Pursuits</a>.</small></footer>
+  <script src="../site.js"></script>
+  <script src="../setup-usb.js"></script>
+  <script src="../board_report.js"></script>
+  <script>
+    const $ = id => document.getElementById(id);
+    $("metric").addEventListener("change", () => $("units").classList.toggle("hidden", $("metric").checked));
+    const support = serialSupport(window);
+    if (support !== "ok") { $(support).classList.remove("hidden"); $("send").disabled = true; }
+
+    // ---- the board: list, what the CYD detected, report ----
+    let boardInfo = null;
+    const statusText = s => (s === "tested" ? "tested" : s === "reported" ? "reported working" : "untested");
+    fetch("../boards.json").then(r => r.json()).then(list => {
+      for (const b of list.boards || []) {
+        if (b.selectable === false) continue;
+        const o = document.createElement("option");
+        o.value = b.id;
+        o.textContent = `${b.name} (${statusText(b.status)})`;
+        $("board").appendChild(o);
+      }
+    }).catch(() => {});
+    $("board-photo-link").addEventListener("click", e => { e.preventDefault(); $("board-photo").classList.toggle("hidden"); });
+
+    function showBoard(r) {
+      const box = $("board-found");
+      box.classList.remove("hidden");
+      if (!r.info) {
+        box.className = "msg msg-warn";
+        box.innerHTML = `The board runs QRPickle ${escapeHtml(r.version)}, which can't report its board yet (v0.3.2 or newer).`;
+        return;
+      }
+      boardInfo = r.info;
+      const b = r.info;
+      const untested = b.status !== "tested";
+      box.className = `msg msg-${b.warn_mismatch || untested ? "warn" : "info"}`;
+      box.innerHTML = `The board detected: <strong>${escapeHtml(b.name)}</strong> (${escapeHtml(statusText(b.status))}; ` +
+        `${escapeHtml(b.decision)}; screen ID ${escapeHtml(b.rddid)} / ${escapeHtml(b.rdid4)} / ${escapeHtml(b.rdid4_indexed)}).` +
+        (b.warn_mismatch ? "<br>Its board setting doesn't match the screen: check the number on the back." : "") +
+        (untested ? "<br>This board hasn't been tested yet: please report how it works (below)." : "");
+      $("board-report").classList.remove("hidden");
+    }
+
+    async function withPort(fn) {
+      let port;
+      try { port = await navigator.serial.requestPort(); } catch (e) { return; }  // no port picked
+      $("send").disabled = $("board-check").disabled = $("board-send").disabled = true;
+      let lp = null;
+      try {
+        if (port.readable || port.writable) await closeLinePort(null, port);  // left open by an earlier run
+        await port.open({ baudRate: 115200 });
+        lp = openLinePort(port);
+        await fn(lp);
+      } catch (e) {
+        show(escapeHtml(e.message || e), "error");
+      } finally {
+        await closeLinePort(lp, port);
+        $("send").disabled = $("board-check").disabled = $("board-send").disabled = false;
+      }
+    }
+
+    function boardMsg(html, kind = "info") {
+      const m = $("board-msg");
+      m.className = `msg msg-${kind}`;
+      m.innerHTML = html;
+    }
+
+    $("board-send").addEventListener("click", () => withPort(async lp => {
+      const value = $("board").value;
+      boardMsg("Connected. Waiting for the board (it may restart, up to 40 seconds)...");
+      const r = await runSetup(lp, { board: value });  // only the board: the setup fields above aren't sent
+      if (r.saved.includes("board")) boardMsg(`Saved: the CYD restarts as ${escapeHtml($("board").selectedOptions[0].textContent)}.`);
+      else if (r.kept.includes("board")) boardMsg("The board didn't accept this choice (firmware too old?).", "error");
+      else boardMsg("No change: the CYD already uses this setting.");
+    }));
+
+    $("board-check").addEventListener("click", () => withPort(async lp => {
+      show("Connected. Waiting for the board (it may restart, up to 40 seconds)...");
+      showBoard(await readBoard(lp));
+      $("status").classList.add("hidden");
+    }));
+
+    $("board-report-open").addEventListener("click", () => {
+      if (!boardInfo) return;
+      const works = {};
+      document.querySelectorAll("#board-report [data-work]").forEach(c => { works[c.dataset.work] = c.checked; });
+      window.open(reportUrl(autoFromBoard(boardInfo), { back: $("board-back").value.trim(), works, notes: $("board-notes").value }),
+                  "_blank", "noopener");
+    });
+
+    function show(html, kind = "info") {
+      const s = $("status");
+      s.className = `msg msg-${kind}`;
+      s.innerHTML = html;
+    }
+    $("send").addEventListener("click", async () => {
+      const f = {};
+      for (const k of ["callsign", "grid", "lat", "lon", "offset", "ssid", "password", "apikey", "hamalert_pass",
+                       "aprs_pass", "unit_temp", "unit_pres", "unit_wind", "unit_dist"]) f[k] = $(k).value;
+      f.clock_12h = $("clock").value === "1";
+      f.metric = $("metric").checked;
+      const settings = buildSettings(f);
+      await withPort(async lp => {
+        show("Connected. Waiting for the board (it may restart, up to 40 seconds)...");
+        const r = await runSetup(lp, settings, { log: t => show(escapeHtml(t)) });
+        show(resultText(r), "info");
+      });
+    });
+  </script>
+</body>
+</html>

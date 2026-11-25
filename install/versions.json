@@ -1,0 +1,92 @@
+{
+  "latest": "v0.3.2",
+  "versions": [
+    {
+      "version": "v0.3.2",
+      "manifest": "v0.3.2/manifest.json",
+      "notes": "QRPickle knows which CYD it runs on: one board list, detection at start-up or your choice, reports for untested boards\n\nUpdate with Cloud OTA or the web console; your settings, profiles and logos\nstay, and the 2.8\" board looks exactly as before. On the first start it asks\nonce whether the detected board matches the number printed on the back. The\nweb console's new Board section also needs the web console files\n(littlefs.bin, System Info tab).\n\nNew\n- Boards: QRPickle reads the screen's ID at start-up and drives that board's\n  own pins: tested on the ESP32-2432S028R (2.8\"), and listed from the makers'\n  data for the 2.8\" one-USB and ST7789 versions, the 2.4\" and 3.2\" CYDs (R and\n  C), the 3.5\" ESP32-3248S035 (R and C) and the Guition JC2432W328C. Bigger\n  screens show the dashboard centred. The board list: docs/BOARDS.md.\n- Choose the board yourself (check the number on the back): in the web\n  console (System Info, Board), on the website's Set up over USB page, or on\n  the CYD when it asks. If your choice doesn't match the screen, QRPickle warns\n  and lets you keep it.\n- Untested boards ask once for a short report: the web console, the Set up\n  over USB page or a QR code on the CYD opens GitHub's board report form with\n  the board's details filled in.\n- The installer asks you to check the number on the back before installing.\n- The SOTA tab says it's live and waiting for spots (the SOTA cluster only\n  sends spots posted after you open the tab).\n- The web console's About tab lists the software QRPickle is built from.\n\nFixes\n- With the screen timeout at 0 (manual sleep only), automatic brightness from\n  the light sensor never ran.\n- No stripes or leftover pictures on the screen while the CYD starts.\n- The original one-USB 2.8\" CYD gets its own colour settings: v0.3.1 used\n  the USB-C version's inverted colours on every board.",
+      "sizes": {
+        "bootloader.bin": 23520,
+        "partitions.bin": 3072,
+        "boot_app0.bin": 8192,
+        "firmware.bin": 1645184,
+        "littlefs.bin": 458752
+      }
+    },
+    {
+      "version": "v0.3.1",
+      "manifest": "v0.3.1/manifest.json",
+      "notes": "Set up over USB, your own units and clock (\u00b0F, inHg, mph or knots, miles, 12-hour time), accented names\n\nUpdate with Cloud OTA or the web console; your settings, profiles and logos\nstay, and the display stays metric until you change it. The web console's\nnew settings also need the web console files (littlefs.bin, System Info tab).\n\nNew\n- Units (asked for in issue #25): temperature in \u00b0C or \u00b0F, pressure in hPa\n  or inHg, wind in m/s, km/h, mph or knots, distance in km or miles, set in\n  the web console (Basic Settings; untick \"Metric units\" to choose). Every\n  screen and the web console's System tab follow them; profiles keep them.\n- Local clock in 12- or 24-hour form (web console). UTC stays 24-hour. In\n  12-hour form the status bar shows \"2:05\" and the clock tile \"2:05 PM\".\n- Set up over USB: right after installing, the website's \"Set up over USB\"\n  page (Chrome or Edge) sends your callsign, location, units, WiFi and keys\n  to the board over the USB cable, without joining its setup hotspot.\n\nFixes\n- Accented letters (\u00c9, \u00f1, \u00fc) in park, city and ARISS event names showed as\n  boxes (\"\u25a1cole\"); the text fonts now include them.\n- The OpenWeather tab's temperature unit no longer overlaps three-digit or\n  negative temperatures.\n- New WiFi details now take effect at once: saving them (web console,\n  device Settings or a profile) restarts the board so it joins the network.\n  At first setup the board used to stay in its hotspot until restarted.\n- An accented letter cut off at the end of a long name or comment no longer\n  shows as a box.\n- After a restart, a router that refused the first connection attempts no\n  longer leaves the board waiting 20 seconds and then opening its setup\n  hotspot: it tries again every few seconds until the router accepts it.\n- An own satellite feed (web console, Satellites) written with spaces after\n  ':' (valid JSON, e.g. \"sats\": [) was rejected; the device now reads it.",
+      "sizes": {
+        "bootloader.bin": 23520,
+        "partitions.bin": 3072,
+        "boot_app0.bin": 8192,
+        "firmware.bin": 1630976,
+        "littlefs.bin": 458752
+      }
+    },
+    {
+      "version": "v0.3.0",
+      "manifest": "v0.3.0/manifest.json",
+      "notes": "New platform with security updates, POTA spots load again when you open xOTA, faster WiFi recovery, and data that says how old it is\n\nUpdate with Cloud OTA (from v0.2.8) or the web console; your settings,\nprofiles and logos stay. This release moves to a newer platform (Arduino\ncore 3 / ESP-IDF 5): going back to v0.2.x needs a web console upload of\nthat version.\n\nNew\n- Weather (OpenWeather tab) and xOTA (POTA tab) say how old their data is\n  (\"updated 5 min ago\"), in the warning colour when it is stale.\n- The firmware runs on Arduino core 3.3.12 / ESP-IDF 5.5, which still gets\n  security fixes (TLS included); v0.2.x used a platform that no longer\n  does.\n\nFixes\n- Opening xOTA by hand never loaded POTA spots while HamAlert or APRS-IS\n  was on (since v0.2.8; screen cycling still worked).\n- Leaving xOTA no longer reconnects the DX cluster in the background\n  (it held about 5 KB of memory for nothing).\n- After a missed WiFi connect at start-up the device tries the saved\n  network every 15 seconds for 5 minutes (was every minute), and the log\n  says why the connection failed.\n- HamAlert, APRS-IS and the DX and SOTA clusters notice a dead connection\n  (after a router restart, for example) and reconnect, instead of looking\n  connected with no data. The Spots page reconnects DX while it is open.\n- More free memory for downloads: unused spot lists are freed, task stacks\n  are sized from measurements, and downloads no longer start while\n  another one is running.\n- The satellite feed download can no longer hang (it waited for the\n  server to close the connection).\n- When a server has several addresses and one doesn't answer from your\n  network, the device tries the next one. The satellite feed failed now\n  and then because one of GitHub's addresses was unreachable from some\n  networks; Cloud OTA and every other download now do the same.\n\nFor developers\n- /api/status: `fresh` (age, failures and state per data source); free\n  stack of the network and timer tasks.\n- docs/DATA_FLOW.md lists every download and background job; its table is\n  generated from src/services/sources.h and checked by the build.\n- Building needs Python 3.14 or older and PlatformIO 6.2.0, also inside\n  pioarduino's own environment (docs/DEVELOPMENT.md).",
+      "sizes": {
+        "bootloader.bin": 23520,
+        "partitions.bin": 3072,
+        "boot_app0.bin": 8192,
+        "firmware.bin": 1598880,
+        "littlefs.bin": 458752
+      }
+    },
+    {
+      "version": "v0.2.8",
+      "manifest": "v0.2.8/manifest.json",
+      "notes": "Downloads work while screens cycle, no crash on the xOTA screen, and a splash logo preview\n\nUpdate with Cloud OTA (from v0.2.7) or the web console. The web console\nfiles changed (the preview button): also upload littlefs.bin in the web\nconsole, which keeps your profiles and logos.\n\nNew\n- Web console, Splash Logos: \"Preview on the device\" shows the start screen\n  with your logos for 10 seconds (or until you tap it), without a restart.\n- GitHub: security policy (report vulnerabilities privately), contributing\n  guide, code of conduct, accessibility notes, and issue and pull request\n  templates.\n\nFixes\n- The device could restart on the xOTA screen while the web console was\n  open: the web server ran out of memory during the login. It now turns a\n  request away when memory is low instead.\n- While screens cycle, POTA spots, the satellite feed and the update check\n  download again (they all failed for memory, also in v0.2.7). Measured on\n  the device over 2 x 30 minutes of cycling: every download OK (was none).\n- Turning cycling off while the DX cluster was connected in the background\n  left it running unread, and its spots filled the memory (20 KB within\n  minutes). It now disconnects.\n- HamAlert and APRS-IS stay connected during downloads instead of\n  reconnecting after each one (the reconnects split the free memory).\n- xOTA and APRS lists use less screen memory (xOTA 49.5 -> 33.5 KB,\n  APRS 44.1 -> 33.9 KB), so the screen memory pool is 16 KB smaller and that\n  memory goes to downloads.\n- The device could restart (watchdog) when a weather update was due while\n  another download was running: the screen waited for the network for up to\n  40 seconds. Weather now tries again 30 seconds later instead.\n- A firmware or filesystem upload in the web console failed (\"Could Not\n  Activate The Firmware\" or \"SESSION_ABORTED\") when the upload before it had\n  been cut off. Each upload now starts clean.\n- Switching APRS-IS on or off in the web console (or with a profile) takes\n  effect at once; it used to wait for a restart.\n- A download that never finishes can no longer keep the device off the\n  network: after 3 minutes the device restarts and /api/status names the\n  task that was stuck.\n- The log no longer reports a skipped weather update as \"OK\".\n\nFor developers\n- /api/status: memory per download job, fragmentation, screen memory per\n  page, refused web requests, the reset reason, the background connections\n  (links), and the task behind a network-lock restart; [HEAP] lines trace\n  the boot.",
+      "sizes": {
+        "bootloader.bin": 17536,
+        "partitions.bin": 3072,
+        "boot_app0.bin": 8192,
+        "firmware.bin": 1588576,
+        "littlefs.bin": 458752
+      }
+    },
+    {
+      "version": "v0.2.7",
+      "manifest": "v0.2.7/manifest.json",
+      "notes": "Cloud OTA can install updates again\n\nUpdating from v0.2.6 or earlier: upload firmware.bin in the web console\n(System Info, firmware); settings are kept. Cloud OTA on those versions finds\nthe update but can't install it (this release fixes that). From v0.2.7 on,\nCloud OTA installs updates by itself. The web console files are unchanged\n(no littlefs.bin needed).\n\nFixes\n- Cloud OTA: installing an update failed right after the download started\n  (\"No Error\"): with the HTTPS connection open, the device had no 4 KB left\n  for the updater. The updater now reserves its memory first. Checked on the\n  device: download, SHA-256 check, install and restart into the new version.\n- No error lines in the log when no custom splash logo is set.",
+      "sizes": {
+        "bootloader.bin": 17536,
+        "partitions.bin": 3072,
+        "boot_app0.bin": 8192,
+        "firmware.bin": 1581776,
+        "littlefs.bin": 458752
+      }
+    }
+  ],
+  "parts": [
+    {
+      "path": "bootloader.bin",
+      "offset": "0x1000",
+      "what": "ESP32 bootloader"
+    },
+    {
+      "path": "partitions.bin",
+      "offset": "0x8000",
+      "what": "Partition table"
+    },
+    {
+      "path": "boot_app0.bin",
+      "offset": "0xE000",
+      "what": "otadata: start from app0"
+    },
+    {
+      "path": "firmware.bin",
+      "offset": "0x10000",
+      "what": "Firmware (app0)"
+    },
+    {
+      "path": "littlefs.bin",
+      "offset": "0x390000",
+      "what": "Web console files (LittleFS); erases saved profiles"
+    }
+  ]
+}
